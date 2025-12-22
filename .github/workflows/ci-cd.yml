@@ -3,9 +3,9 @@ name: CI/CD Pipeline
 on:
   push:
     breanches: [main]
-  pull request:
+  pull_request:
     branches: [main]
-  worflow_dispatch:
+  workflow_dispatch:
     inputs:
       reason:
         description: "Reason for manual trigger"
