@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Only deploy on push to main branch
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.ref == 'refs/heads/119894-Peter_Abboud'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     environment:
       name: github-pages
