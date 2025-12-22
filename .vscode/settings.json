@@ -3,5 +3,5 @@
   "editor.inlineSuggest.enabled": false,
   "chat.commandCenter.enabled": false,
   "chat.agent.enabled": false,
-  "chat.editRequests": "none",
+  "chat.editRequests": "none"
 }

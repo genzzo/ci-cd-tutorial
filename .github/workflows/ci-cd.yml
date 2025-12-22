@@ -104,6 +104,6 @@ jobs:
         with:
           path: ./public
 
-      - name: Deploy to Github Pages 
+      - name: Deploy to Github Pages
         id: deployment
         uses: actions/deploy-pages@v4
