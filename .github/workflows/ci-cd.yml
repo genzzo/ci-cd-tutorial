@@ -15,8 +15,6 @@ jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest
-    outputs:
-      pages-artifact-id: ${{ steps.upload_pages_artifact.outputs.artifact_id || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,17 +48,16 @@ jobs:
           name: build-logs
           path: build.log
 
-      - name: Upload demo site artifact (generic)
+      - name: Upload demo site artifact
         uses: actions/upload-artifact@v4
         with:
           name: demo-site
-          path: public/
+          path: dist/
 
-      - name: Upload Pages artifact (for GitHub Pages deploy)
-        id: upload_pages_artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public/
+          path: dist/
 
   deploy:
     name: Deploy to GitHub Pages
