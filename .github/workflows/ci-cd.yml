@@ -52,12 +52,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: demo-site
-          path: dist/
+          path: demo/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/
+          path: demo/
 
   deploy:
     name: Deploy to GitHub Pages
