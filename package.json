@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "build": "mkdir -p dist && cp -r src/* dist/",
+    "build": "node -e \"const fs = require('fs'); fs.mkdirSync('dist', { recursive: true }); const files = fs.readdirSync('src'); files.forEach(file => fs.copyFileSync('src/' + file, 'dist/' + file));\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
