@@ -4,7 +4,6 @@ permissions:
   pages: write
   id-token: write
 
-
 on:
   push:
     branches: [main]
@@ -39,8 +38,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: demo-site
-          path: demo/
+          name: github-pages   # <- CHANGED
+          path: demo/          # <- points to your demo folder
 
   cd:
     needs: ci
