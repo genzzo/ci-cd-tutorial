@@ -1,5 +1,5 @@
 {
-  "chat.disableAIFeatures": true,
+  "chat.disableAIFeatures": false,
   "editor.inlineSuggest.enabled": false,
   "chat.commandCenter.enabled": false,
   "chat.agent.enabled": false,
