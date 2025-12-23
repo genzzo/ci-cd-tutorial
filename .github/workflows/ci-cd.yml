@@ -36,7 +36,7 @@ jobs:
         run: npm run build
 
       - name: Generate build log
-        run: |
+        run: 
           echo "Build completed at $(date)" > build.log
           ls -la public/ >> build.log
 
