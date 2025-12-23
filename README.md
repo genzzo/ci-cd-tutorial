@@ -79,7 +79,7 @@ Create a `.github/workflows/ci-cd.yml` file that:
 1. Go to your repository **Settings**
 2. Navigate to **Pages** (in the left sidebar)
 3. Under **Source**, select **GitHub Actions**
-4. Push your workflow file to trigger the first deployment
+4. Push your workflow file to trigger the first deployment.
 
 ### 6. Test Your Pipeline
 
