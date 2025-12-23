@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# Trigger CI on pushes to main and pull requests
 on:
   push:
     branches:
@@ -43,9 +42,9 @@ jobs:
         run: |
           mkdir -p logs
           echo "CI Pipeline ran at $(date)" > logs/ci-pipeline.log
-          echo "Tests passed" > logs/ci-pipeline.log
+          echo "Tests passed" >> logs/ci-pipeline.log
         
-      - name: Generate demp HTML page
+      - name: Generate demo HTML page
         run: |
           mkdir -p public
           cp demo/index.html public/
@@ -65,30 +64,28 @@ jobs:
           path: public/
           retention-days: 30
 
-deploy:
-  name: Deploy to Github pages
-  needs: ci
-  runs-on: ubuntu-latest
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-  # Only deploy on push to main branch
-  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-  environment:
-    name: github-pages
-    url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: demo-site
+          path: ./public
 
-  steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v7
-      with:
-        name: demo-site
-        path: ./public
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
 
-    - name: Upload to Github Pages
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./public
-
-    - name: Deploy to Github Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
