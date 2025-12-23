@@ -16,12 +16,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -40,43 +41,54 @@ jobs:
 
       - name: Generate log file
         run: |
-          echo "Build completed at $(date)" > build.log
-
-      - name: Upload build logs
-        uses: actions/upload-artifact@v3
+          mkdir -p logs
+          echo "CI Pipeline ran at $(date)" > logs/ci-pipeline.log
+          echo "Tests passed" > logs/ci-pipeline.log
+        
+      - name: Generate demp HTML page
+        run: |
+          mkdir -p public
+          cp demo/index.html public/
+          cp dist/sum.js public/
+      
+      - name: Upload build logs artifact
+        uses: actions/upload-artifact@v6
         with:
           name: build-logs
-          path: build.log
+          path: logs/
+          retention-days: 30
 
-      - name: Upload demo site
-        uses: actions/upload-artifact@v3
+      - name: Upload demo site artifact
+        uses: actions/upload-artifact@v6
         with:
           name: demo-site
           path: public/
+          retention-days: 30
 
-  cd:
-    name: Continuous Deployment
-    needs: ci
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'  # Only deploy from main branch
+deploy:
+  name: Deploy to Github pages
+  needs: ci
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  # Only deploy on push to main branch
+  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
 
-      - name: Install dependencies
-        run: npm ci
+  steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v7
+      with:
+        name: demo-site
+        path: ./public
 
-      - name: Build project
-        run: npm run build
+    - name: Upload to Github Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./public
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v6
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+    - name: Deploy to Github Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
