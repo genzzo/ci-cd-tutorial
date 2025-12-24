@@ -16,4 +16,4 @@ test("sum throws on NaN input", () => {
 
 test("sum does not return wrong result", () => {
   assert.notStrictEqual(sum(1, 2), 4);
-});
+})
