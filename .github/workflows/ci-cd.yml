@@ -48,15 +48,14 @@ jobs:
       - name: Create build log
         run: |
           mkdir -p logs
-          echo "Build completed at $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > logs/build.log
+          echo "Build completed at $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > logs/build.log
 
       - name: Upload build logs artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-logs
           path: logs/
-git 
-      # README says "public/" but this repo actually has "demo/" for the site
+
       - name: Upload demo site artifact
         uses: actions/upload-artifact@v4
         with:
@@ -73,6 +72,9 @@ git
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -81,3 +83,4 @@ git
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
