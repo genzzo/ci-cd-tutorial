@@ -11,5 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Say hello
-        run: echo "Hello from CI"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
