@@ -1,0 +1,94 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Generate build log
+        run: |
+          mkdir -p logs
+          echo "Build timestamp (UTC): $(date -u)" > logs/build-info.txt
+          echo "Commit: $GITHUB_SHA" >> logs/build-info.txt
+          echo "Ref: $GITHUB_REF" >> logs/build-info.txt
+          echo "Actor: $GITHUB_ACTOR" >> logs/build-info.txt
+
+      - name: Upload build logs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: logs/
+
+      - name: Upload demo site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-site
+          path: demo/
+
+  cd:
+    name: CD (Deploy to GitHub Pages)
+    needs: ci
+    runs-on: ubuntu-latest
+
+    # Only deploy on push to main (not PRs)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      # Publish the demo folder to GitHub Pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: demo
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
