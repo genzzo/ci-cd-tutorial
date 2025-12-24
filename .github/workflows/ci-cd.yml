@@ -1,11 +1,7 @@
-name: CI-CD Tutorial
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
 jobs:
   ci:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Say hello
+        run: echo "Hello from CI"
