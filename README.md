@@ -251,3 +251,8 @@ This project is open source and available for educational purposes.
 - [GitHub Pages Documentation](https://docs.github.com/en/pages)
 - [ESLint](https://eslint.org/)
 - [Prettier](https://prettier.io/)
+
+
+Submission: CI/CD Lab
+Student: Wassem Khaled Abou Arab (120581)
+Branch: 120581-Wassem_AbouArab
