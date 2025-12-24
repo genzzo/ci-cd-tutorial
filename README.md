@@ -10,6 +10,7 @@ This repository is a **teaching project** where students learn CI/CD by:
 - Setting up automated testing and code quality checks
 - Creating and managing build artifacts
 - Implementing automatic deployment to GitHub Pages
+- Testing the pipeline with pull requests and merges
 
 ## 📋 Requirements
 
