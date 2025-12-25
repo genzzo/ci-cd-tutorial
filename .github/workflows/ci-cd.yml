@@ -1,0 +1,85 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Create build log
+        run: |
+          mkdir -p logs
+          echo "Build completed at $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > logs/build.log
+
+      - name: Upload build logs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: logs/
+
+      - name: Upload demo site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-site
+          path: demo/
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: demo/
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
